@@ -8,12 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@class MBMViewController;
-
 @interface MBMAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-
-@property (strong, nonatomic) MBMViewController *viewController;
 
 @end
