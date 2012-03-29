@@ -34,5 +34,17 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>icon</string>
+			</array>
+			<key>UIPrerenderedIcon</key>
+			<true/>
+		</dict>
+	</dict>
 </dict>
 </plist>
