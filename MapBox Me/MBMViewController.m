@@ -108,7 +108,7 @@
 {
     if ([annotation.userInfo isEqual:@"user"])
     {
-        return [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"dot.png"]];
+        return [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDot.png"]];
     }
     else if ([annotation.userInfo isEqual:@"circle"])
     {
