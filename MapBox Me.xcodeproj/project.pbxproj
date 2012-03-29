@@ -11,6 +11,7 @@
 		DD005CDF1524EDB1006B9481 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = DD005CDD1524EDB1006B9481 /* icon.png */; };
 		DD005CF51524F065006B9481 /* TrackingDot@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD005CF31524F065006B9481 /* TrackingDot@2x.png */; };
 		DD005CF61524F065006B9481 /* TrackingDot.png in Resources */ = {isa = PBXBuildFile; fileRef = DD005CF41524F065006B9481 /* TrackingDot.png */; };
+		DD005D1B1524F0F2006B9481 /* routeme.plist in Resources */ = {isa = PBXBuildFile; fileRef = DD005D1A1524F0F2006B9481 /* routeme.plist */; };
 		DDD0B7A61524D4E400EBC267 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDD0B7A51524D4E400EBC267 /* UIKit.framework */; };
 		DDD0B7A81524D4E400EBC267 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDD0B7A71524D4E400EBC267 /* Foundation.framework */; };
 		DDD0B7AA1524D4E400EBC267 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDD0B7A91524D4E400EBC267 /* CoreGraphics.framework */; };
@@ -55,6 +56,7 @@
 		DD005CDD1524EDB1006B9481 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		DD005CF31524F065006B9481 /* TrackingDot@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TrackingDot@2x.png"; sourceTree = "<group>"; };
 		DD005CF41524F065006B9481 /* TrackingDot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TrackingDot.png; sourceTree = "<group>"; };
+		DD005D1A1524F0F2006B9481 /* routeme.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = routeme.plist; sourceTree = "<group>"; };
 		DDD0B7A11524D4E400EBC267 /* MapBox Me.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MapBox Me.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDD0B7A51524D4E400EBC267 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		DDD0B7A71524D4E400EBC267 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -149,6 +151,7 @@
 				DD005CF31524F065006B9481 /* TrackingDot@2x.png */,
 				DD005CDD1524EDB1006B9481 /* icon.png */,
 				DD005CDC1524EDB1006B9481 /* icon@2x.png */,
+				DD005D1A1524F0F2006B9481 /* routeme.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -254,6 +257,7 @@
 				DD005CDF1524EDB1006B9481 /* icon.png in Resources */,
 				DD005CF51524F065006B9481 /* TrackingDot@2x.png in Resources */,
 				DD005CF61524F065006B9481 /* TrackingDot.png in Resources */,
+				DD005D1B1524F0F2006B9481 /* routeme.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
