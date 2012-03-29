@@ -45,10 +45,15 @@
     self.mapView.tileSource = [[RMTileStreamSource alloc] initWithReferenceURL:[[NSBundle mainBundle] URLForResource:@"mapbox.mapbox-streets" withExtension:@"plist"]];
     self.mapView.decelerationMode = RMMapDecelerationFast;
     self.mapView.adjustTilesForRetinaDisplay = YES;    
-    self.mapView.backgroundColor = [UIColor blackColor];
     self.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
     self.mapView.minZoom = 1;
     self.mapView.zoom = 2;
+
+    CGColorRef darkBackgroundColor = CGColorCreateCopyWithAlpha([self.navigationController.navigationBar.tintColor CGColor], 0.5);
+
+    self.mapView.backgroundColor = [UIColor colorWithCGColor:darkBackgroundColor];
+
+    CGColorRelease(darkBackgroundColor);
 }
 
 
