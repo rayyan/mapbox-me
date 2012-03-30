@@ -17,6 +17,8 @@
 
 @property (nonatomic, strong) IBOutlet RMMapView *mapView;
 @property (nonatomic, strong) CLLocationManager *locationManager;
+@property (nonatomic, strong) RMAnnotation *accuracyCircle;
+@property (nonatomic, strong) RMAnnotation *userLocation;
 @property (nonatomic, assign) BOOL updating;
 
 - (void)startUpdating;
@@ -27,6 +29,8 @@
 
 @synthesize mapView;
 @synthesize locationManager;
+@synthesize accuracyCircle;
+@synthesize userLocation;
 @synthesize updating;
 
 - (void)viewDidLoad
@@ -98,22 +102,23 @@
                          
                          [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:southWest northEast:northEast animated:YES];
                          
-                         [self.mapView removeAllAnnotations];
-
-                         if (manager.location.horizontalAccuracy > 10)
+                         if ( ! self.accuracyCircle)
                          {
-                             RMAnnotation *circleAnnotation = [RMAnnotation annotationWithMapView:self.mapView coordinate:manager.location.coordinate andTitle:nil];
-                             
-                             circleAnnotation.userInfo = @"circle";
-                             
-                             [self.mapView addAnnotation:circleAnnotation];
-                         }
+                             self.accuracyCircle = [RMAnnotation annotationWithMapView:self.mapView coordinate:manager.location.coordinate andTitle:nil];
 
-                         RMAnnotation *userLocation = [RMAnnotation annotationWithMapView:self.mapView coordinate:manager.location.coordinate andTitle:nil];
+                             [self.mapView addAnnotation:self.accuracyCircle];
+                         }
                          
-                         userLocation.userInfo = @"user";
+                         self.accuracyCircle.coordinate = manager.location.coordinate;
                          
-                         [self.mapView addAnnotation:userLocation];
+                         if ( ! self.userLocation)
+                         {
+                             self.userLocation = [RMAnnotation annotationWithMapView:self.mapView coordinate:manager.location.coordinate andTitle:nil];
+                             
+                             [self.mapView addAnnotation:self.userLocation];
+                         }
+                         
+                         self.userLocation.coordinate = manager.location.coordinate;
                      }
                      completion:^(BOOL finished)
                      {
@@ -131,11 +136,7 @@
 
 - (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
 {
-    if ([annotation.userInfo isEqual:@"user"])
-    {
-        return [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDot.png"]];
-    }
-    else if ([annotation.userInfo isEqual:@"circle"])
+    if ([annotation isEqual:self.accuracyCircle])
     {
         RMCircle *circle = [[RMCircle alloc] initWithView:self.mapView radiusInMeters:self.locationManager.location.horizontalAccuracy];
         
@@ -144,7 +145,13 @@
         
         circle.lineWidthInPixels = 1.0;
         
+        // TODO: add throbber animation
+        
         return circle;
+    }
+    else if ([annotation isEqual:self.userLocation])
+    {
+        return [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDot.png"]];
     }
     
     return nil;
