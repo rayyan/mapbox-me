@@ -8,7 +8,7 @@
 
 #import "MBMViewController.h"
 
-#import "RMTileStreamSource.h"
+#import "RMMapBoxSource.h"
 #import "RMAnnotation.h"
 #import "RMMarker.h"
 #import "RMCircle.h"
@@ -42,7 +42,7 @@
                                                                                            action:@selector(startUpdatingLocation)];
     
     self.mapView.delegate = self;
-    self.mapView.tileSource = [[RMTileStreamSource alloc] initWithReferenceURL:[[NSBundle mainBundle] URLForResource:@"mapbox.mapbox-streets" withExtension:@"plist"]];
+    self.mapView.tileSource = [[RMMapBoxSource alloc] init];
     self.mapView.decelerationMode = RMMapDecelerationFast;
     self.mapView.adjustTilesForRetinaDisplay = YES;    
     self.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);

@@ -25,7 +25,6 @@
 		DDD0B7DB1524D69200EBC267 /* libMapView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDD0B7D51524D62500EBC267 /* libMapView.a */; };
 		DDD0B7DD1524D6EA00EBC267 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DDD0B7DC1524D6EA00EBC267 /* libsqlite3.dylib */; };
 		DDD0B7DF1524D6FB00EBC267 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDD0B7DE1524D6FB00EBC267 /* QuartzCore.framework */; };
-		DDD0B7E11524D7D800EBC267 /* mapbox.mapbox-streets.plist in Resources */ = {isa = PBXBuildFile; fileRef = DDD0B7E01524D7D800EBC267 /* mapbox.mapbox-streets.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,7 +75,6 @@
 		DDD0B7C51524D62400EBC267 /* MapView.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MapView.xcodeproj; path = "Alpstein-Route-Me/MapView/MapView.xcodeproj"; sourceTree = SOURCE_ROOT; };
 		DDD0B7DC1524D6EA00EBC267 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		DDD0B7DE1524D6FB00EBC267 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		DDD0B7E01524D7D800EBC267 /* mapbox.mapbox-streets.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "mapbox.mapbox-streets.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,7 +146,6 @@
 				DDD0B7AE1524D4E400EBC267 /* InfoPlist.strings */,
 				DDD0B7B11524D4E400EBC267 /* main.m */,
 				DDD0B7B31524D4E400EBC267 /* MapBox Me-Prefix.pch */,
-				DDD0B7E01524D7D800EBC267 /* mapbox.mapbox-streets.plist */,
 				DD005CF41524F065006B9481 /* TrackingDot.png */,
 				DD005CF31524F065006B9481 /* TrackingDot@2x.png */,
 				DD005CDD1524EDB1006B9481 /* icon.png */,
@@ -255,7 +252,6 @@
 			files = (
 				DDD0B7B01524D4E400EBC267 /* InfoPlist.strings in Resources */,
 				DDD0B7BC1524D4E400EBC267 /* MBMViewController.xib in Resources */,
-				DDD0B7E11524D7D800EBC267 /* mapbox.mapbox-streets.plist in Resources */,
 				DD005CDE1524EDB1006B9481 /* icon@2x.png in Resources */,
 				DD005CDF1524EDB1006B9481 /* icon.png in Resources */,
 				DD005CF51524F065006B9481 /* TrackingDot@2x.png in Resources */,
