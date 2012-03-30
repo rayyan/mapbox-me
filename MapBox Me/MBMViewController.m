@@ -17,6 +17,9 @@
 
 @property (nonatomic, strong) IBOutlet RMMapView *mapView;
 @property (nonatomic, strong) CLLocationManager *locationManager;
+@property (nonatomic, assign) BOOL updating;
+
+- (void)startUpdating;
 
 @end
 
@@ -24,6 +27,7 @@
 
 @synthesize mapView;
 @synthesize locationManager;
+@synthesize updating;
 
 - (void)viewDidLoad
 {
@@ -38,8 +42,8 @@
     self.navigationController.navigationBar.tintColor = [UIColor colorWithRed:0.116 green:0.550 blue:0.670 alpha:1.000];
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh 
-                                                                                           target:self.locationManager 
-                                                                                           action:@selector(startUpdatingLocation)];
+                                                                                           target:self 
+                                                                                           action:@selector(startUpdating)];
     
     self.mapView.delegate = self;
     self.mapView.tileSource = [[RMMapBoxSource alloc] init];
@@ -56,11 +60,19 @@
     CGColorRelease(darkBackgroundColor);
 }
 
-
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
 
+    [self startUpdating];
+}
+
+#pragma mark -
+
+- (void)startUpdating
+{
+    self.updating = YES;
+    
     [self.locationManager startUpdatingLocation];
 }
 
@@ -68,6 +80,8 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
+    self.updating = YES;
+    
     [UIView animateWithDuration:5.0
                           delay:0.0
                         options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveLinear
@@ -101,13 +115,19 @@
                          
                          [self.mapView addAnnotation:userLocation];
                      }
-                     completion:nil];
-
-    if ([newLocation distanceFromLocation:oldLocation] == 0)
-        [self.locationManager stopUpdatingLocation];
+                     completion:^(BOOL finished)
+                     {
+                         self.updating = NO;
+                     }];
 }
 
 #pragma mark -
+
+- (void)mapViewRegionDidChange:(RMMapView *)mapView
+{
+    if ( ! self.updating)
+        [self.locationManager stopUpdatingLocation];
+}
 
 - (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
 {
