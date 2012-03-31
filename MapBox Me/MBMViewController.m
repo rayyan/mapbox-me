@@ -18,6 +18,7 @@
 @property (nonatomic, strong) IBOutlet RMMapView *mapView;
 @property (nonatomic, strong) CLLocationManager *locationManager;
 @property (nonatomic, strong) RMAnnotation *accuracyCircle;
+@property (nonatomic, strong) RMAnnotation *trackingHalo;
 @property (nonatomic, strong) RMAnnotation *userLocation;
 @property (nonatomic, assign) BOOL updating;
 
@@ -30,6 +31,7 @@
 @synthesize mapView;
 @synthesize locationManager;
 @synthesize accuracyCircle;
+@synthesize trackingHalo;
 @synthesize userLocation;
 @synthesize updating;
 
@@ -102,6 +104,8 @@
                          
                          [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:southWest northEast:northEast animated:YES];
                          
+                         // accuracy circle: visible when homing in
+                         //
                          if ( ! self.accuracyCircle)
                          {
                              self.accuracyCircle = [RMAnnotation annotationWithMapView:self.mapView coordinate:manager.location.coordinate andTitle:nil];
@@ -111,6 +115,23 @@
                          
                          self.accuracyCircle.coordinate = manager.location.coordinate;
                          
+                         [self.mapView.delegate mapView:self.mapView layerForAnnotation:self.accuracyCircle].hidden = (manager.location.horizontalAccuracy <= 10);
+
+                         // tracking halo: visible after homing in
+                         //
+                         if ( ! self.trackingHalo)
+                         {
+                             self.trackingHalo = [RMAnnotation annotationWithMapView:self.mapView coordinate:manager.location.coordinate andTitle:nil];
+                             
+                             [self.mapView addAnnotation:self.trackingHalo];
+                         }
+                         
+                         self.trackingHalo.coordinate = manager.location.coordinate;
+                         
+                         [self.mapView.delegate mapView:self.mapView layerForAnnotation:self.trackingHalo].hidden = (manager.location.horizontalAccuracy > 10);
+                         
+                         // user location: always visible
+                         //
                          if ( ! self.userLocation)
                          {
                              self.userLocation = [RMAnnotation annotationWithMapView:self.mapView coordinate:manager.location.coordinate andTitle:nil];
@@ -140,14 +161,50 @@
     {
         RMCircle *circle = [[RMCircle alloc] initWithView:self.mapView radiusInMeters:self.locationManager.location.horizontalAccuracy];
         
-        circle.lineColor = [UIColor colorWithRed:0 green:0 blue:1.0 alpha:0.25];
-        circle.fillColor = [UIColor colorWithRed:0 green:0 blue:1.0 alpha:0.1];
+        circle.lineColor = [UIColor colorWithRed:0.378 green:0.552 blue:0.827 alpha:0.7];
+        circle.fillColor = [UIColor colorWithRed:0.378 green:0.552 blue:0.827 alpha:0.15];
         
-        circle.lineWidthInPixels = 1.0;
+        circle.lineWidthInPixels = 2.0;
         
         // TODO: add throbber animation
         
         return circle;
+    }
+    else if ([annotation isEqual:self.trackingHalo])
+    {
+        RMMarker *halo = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDotHalo.png"]];
+        
+        CABasicAnimation *boundsAnimation = [CABasicAnimation animationWithKeyPath:@"bounds"];
+        
+        boundsAnimation.duration = 2.0;
+        
+        boundsAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+
+        boundsAnimation.repeatCount = MAXFLOAT;
+        
+        boundsAnimation.fromValue = [NSValue valueWithCGRect:CGRectMake(0, 0, halo.bounds.size.width * 0.2, halo.bounds.size.height * 0.2)];
+        boundsAnimation.toValue   = [NSValue valueWithCGRect:CGRectMake(0, 0, halo.bounds.size.width * 1.1, halo.bounds.size.height * 1.1)];
+
+        boundsAnimation.removedOnCompletion = NO;
+        
+        [halo addAnimation:boundsAnimation forKey:@"animateBounds"];
+
+        CABasicAnimation *opacityAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
+        
+        opacityAnimation.duration = 2.0;
+        
+        opacityAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+
+        opacityAnimation.repeatCount = MAXFLOAT;
+        
+        opacityAnimation.fromValue = [NSNumber numberWithFloat:1.0];
+        opacityAnimation.toValue   = [NSNumber numberWithFloat:0.0];
+        
+        opacityAnimation.removedOnCompletion = NO;
+        
+        [halo addAnimation:opacityAnimation forKey:@"animateOpacity"];
+        
+        return halo;
     }
     else if ([annotation isEqual:self.userLocation])
     {

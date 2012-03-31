@@ -13,6 +13,7 @@
 		DD005CF61524F065006B9481 /* TrackingDot.png in Resources */ = {isa = PBXBuildFile; fileRef = DD005CF41524F065006B9481 /* TrackingDot.png */; };
 		DD005D1B1524F0F2006B9481 /* routeme.plist in Resources */ = {isa = PBXBuildFile; fileRef = DD005D1A1524F0F2006B9481 /* routeme.plist */; };
 		DD005D211524F386006B9481 /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = DD005D201524F386006B9481 /* Entitlements.plist */; };
+		DD5960A1152676BE0086568C /* TrackingDotHalo.png in Resources */ = {isa = PBXBuildFile; fileRef = DD5960A0152676BE0086568C /* TrackingDotHalo.png */; };
 		DDD0B7A61524D4E400EBC267 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDD0B7A51524D4E400EBC267 /* UIKit.framework */; };
 		DDD0B7A81524D4E400EBC267 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDD0B7A71524D4E400EBC267 /* Foundation.framework */; };
 		DDD0B7AA1524D4E400EBC267 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDD0B7A91524D4E400EBC267 /* CoreGraphics.framework */; };
@@ -58,6 +59,7 @@
 		DD005CF41524F065006B9481 /* TrackingDot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TrackingDot.png; sourceTree = "<group>"; };
 		DD005D1A1524F0F2006B9481 /* routeme.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = routeme.plist; sourceTree = "<group>"; };
 		DD005D201524F386006B9481 /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = SOURCE_ROOT; };
+		DD5960A0152676BE0086568C /* TrackingDotHalo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TrackingDotHalo.png; sourceTree = "<group>"; };
 		DDD0B7A11524D4E400EBC267 /* MapBox Me.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MapBox Me.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDD0B7A51524D4E400EBC267 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		DDD0B7A71524D4E400EBC267 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -148,6 +150,7 @@
 				DDD0B7B31524D4E400EBC267 /* MapBox Me-Prefix.pch */,
 				DD005CF41524F065006B9481 /* TrackingDot.png */,
 				DD005CF31524F065006B9481 /* TrackingDot@2x.png */,
+				DD5960A0152676BE0086568C /* TrackingDotHalo.png */,
 				DD005CDD1524EDB1006B9481 /* icon.png */,
 				DD005CDC1524EDB1006B9481 /* icon@2x.png */,
 				DD005D1A1524F0F2006B9481 /* routeme.plist */,
@@ -258,6 +261,7 @@
 				DD005CF61524F065006B9481 /* TrackingDot.png in Resources */,
 				DD005D1B1524F0F2006B9481 /* routeme.plist in Resources */,
 				DD005D211524F386006B9481 /* Entitlements.plist in Resources */,
+				DD5960A1152676BE0086568C /* TrackingDotHalo.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
