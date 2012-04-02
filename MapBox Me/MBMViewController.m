@@ -13,6 +13,9 @@
 #import "RMMarker.h"
 #import "RMCircle.h"
 
+#define kMapBoxMeNormalTintColor [UIColor colorWithRed:0.120 green:0.650 blue:0.750 alpha:1.000]
+#define kMapBoxMeActiveTintColor [UIColor colorWithRed:0.120 green:0.550 blue:0.670 alpha:1.000]
+
 @interface MBMViewController ()
 
 @property (nonatomic, strong) IBOutlet RMMapView *mapView;
@@ -20,9 +23,10 @@
 @property (nonatomic, strong) RMAnnotation *accuracyCircle;
 @property (nonatomic, strong) RMAnnotation *trackingHalo;
 @property (nonatomic, strong) RMAnnotation *userLocation;
-@property (nonatomic, assign) BOOL updating;
+@property (nonatomic, assign) BOOL shouldRecenter;
 
 - (void)startUpdating;
+- (void)stopUpdating;
 
 @end
 
@@ -33,7 +37,7 @@
 @synthesize accuracyCircle;
 @synthesize trackingHalo;
 @synthesize userLocation;
-@synthesize updating;
+@synthesize shouldRecenter;
 
 - (void)viewDidLoad
 {
@@ -45,11 +49,12 @@
 
     self.title = @"MapBox Me";
     
-    self.navigationController.navigationBar.tintColor = [UIColor colorWithRed:0.116 green:0.550 blue:0.670 alpha:1.000];
+    self.navigationController.navigationBar.tintColor = kMapBoxMeActiveTintColor;
     
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh 
-                                                                                           target:self 
-                                                                                           action:@selector(startUpdating)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"TrackingLocation.png"]
+                                                                                                  style:UIBarButtonItemStyleBordered
+                                                                                                 target:self 
+                                                                                                 action:@selector(startUpdating)];
     
     self.mapView.delegate = self;
     self.mapView.tileSource = [[RMMapBoxSource alloc] init];
@@ -64,6 +69,12 @@
     self.mapView.backgroundColor = [UIColor colorWithCGColor:darkBackgroundColor];
 
     CGColorRelease(darkBackgroundColor);
+    
+    UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleGesture:)];
+    
+    panGesture.delegate = self;
+    
+    [self.mapView addGestureRecognizer:panGesture];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -77,20 +88,36 @@
 
 - (void)startUpdating
 {
-    self.updating = YES;
+    self.navigationItem.rightBarButtonItem.tintColor = kMapBoxMeActiveTintColor;
+    self.navigationItem.rightBarButtonItem.action    = @selector(stopUpdating);
+
+    self.shouldRecenter = YES;
     
     [self.locationManager startUpdatingLocation];
+}
+
+- (void)stopUpdating
+{
+    [self.locationManager stopUpdatingLocation];
+    
+    self.shouldRecenter = NO;
+    
+    self.navigationItem.rightBarButtonItem.tintColor = kMapBoxMeNormalTintColor;
+    self.navigationItem.rightBarButtonItem.action    = @selector(startUpdating);
+}
+
+- (void)handleGesture:(UIGestureRecognizer *)gesture
+{
+    self.shouldRecenter = NO;
 }
 
 #pragma mark -
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-    self.updating = YES;
-    
-    [UIView animateWithDuration:5.0
+    [UIView animateWithDuration:1.0
                           delay:0.0
-                        options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveLinear
+                        options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
                      animations:^(void)
                      {
                          float delta = manager.location.horizontalAccuracy / 110000;
@@ -101,8 +128,8 @@
                          CLLocationCoordinate2D northEast = CLLocationCoordinate2DMake(manager.location.coordinate.latitude  + delta, 
                                                                                        manager.location.coordinate.longitude + delta);
 
-                         
-                         [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:southWest northEast:northEast animated:YES];
+                         if (self.shouldRecenter)
+                             [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:southWest northEast:northEast animated:NO];
                          
                          // accuracy circle: visible when homing in
                          //
@@ -141,19 +168,17 @@
                          
                          self.userLocation.coordinate = manager.location.coordinate;
                      }
-                     completion:^(BOOL finished)
-                     {
-                         self.updating = NO;
-                     }];
+                     completion:nil];
 }
 
 #pragma mark -
 
-- (void)mapViewRegionDidChange:(RMMapView *)mapView
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-    if ( ! self.updating)
-        [self.locationManager stopUpdatingLocation];
+    return YES;
 }
+
+#pragma mark -
 
 - (RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation
 {

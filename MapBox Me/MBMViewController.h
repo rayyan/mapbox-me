@@ -12,6 +12,6 @@
 
 #import "RMMapView.h"
 
-@interface MBMViewController : UIViewController <CLLocationManagerDelegate, RMMapViewDelegate>
+@interface MBMViewController : UIViewController <CLLocationManagerDelegate, RMMapViewDelegate, UIGestureRecognizerDelegate>
 
 @end
