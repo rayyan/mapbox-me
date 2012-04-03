@@ -15,8 +15,12 @@
 		DD005D211524F386006B9481 /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = DD005D201524F386006B9481 /* Entitlements.plist */; };
 		DD5960A1152676BE0086568C /* TrackingDotHalo.png in Resources */ = {isa = PBXBuildFile; fileRef = DD5960A0152676BE0086568C /* TrackingDotHalo.png */; };
 		DD5960A715268D6A0086568C /* TrackingLocation@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD5960A215268D6A0086568C /* TrackingLocation@2x.png */; };
+		DD5960A815268D6A0086568C /* TrackingHeading@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD5960A315268D6A0086568C /* TrackingHeading@2x.png */; };
 		DD5960A915268D6A0086568C /* TrackingDotHalo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD5960A415268D6A0086568C /* TrackingDotHalo@2x.png */; };
 		DD5960AA15268D6A0086568C /* TrackingLocation.png in Resources */ = {isa = PBXBuildFile; fileRef = DD5960A515268D6A0086568C /* TrackingLocation.png */; };
+		DD5960AB15268D6A0086568C /* TrackingHeading.png in Resources */ = {isa = PBXBuildFile; fileRef = DD5960A615268D6A0086568C /* TrackingHeading.png */; };
+		DD5960AE152A77B50086568C /* HeadingAngleSmall.png in Resources */ = {isa = PBXBuildFile; fileRef = DD5960AC152A77B50086568C /* HeadingAngleSmall.png */; };
+		DD5960AF152A77B50086568C /* HeadingAngleSmall@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD5960AD152A77B50086568C /* HeadingAngleSmall@2x.png */; };
 		DDD0B7A61524D4E400EBC267 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDD0B7A51524D4E400EBC267 /* UIKit.framework */; };
 		DDD0B7A81524D4E400EBC267 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDD0B7A71524D4E400EBC267 /* Foundation.framework */; };
 		DDD0B7AA1524D4E400EBC267 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDD0B7A91524D4E400EBC267 /* CoreGraphics.framework */; };
@@ -64,8 +68,12 @@
 		DD005D201524F386006B9481 /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = SOURCE_ROOT; };
 		DD5960A0152676BE0086568C /* TrackingDotHalo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TrackingDotHalo.png; sourceTree = "<group>"; };
 		DD5960A215268D6A0086568C /* TrackingLocation@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TrackingLocation@2x.png"; sourceTree = "<group>"; };
+		DD5960A315268D6A0086568C /* TrackingHeading@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TrackingHeading@2x.png"; sourceTree = "<group>"; };
 		DD5960A415268D6A0086568C /* TrackingDotHalo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TrackingDotHalo@2x.png"; sourceTree = "<group>"; };
 		DD5960A515268D6A0086568C /* TrackingLocation.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TrackingLocation.png; sourceTree = "<group>"; };
+		DD5960A615268D6A0086568C /* TrackingHeading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TrackingHeading.png; sourceTree = "<group>"; };
+		DD5960AC152A77B50086568C /* HeadingAngleSmall.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = HeadingAngleSmall.png; sourceTree = "<group>"; };
+		DD5960AD152A77B50086568C /* HeadingAngleSmall@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "HeadingAngleSmall@2x.png"; sourceTree = "<group>"; };
 		DDD0B7A11524D4E400EBC267 /* MapBox Me.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MapBox Me.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDD0B7A51524D4E400EBC267 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		DDD0B7A71524D4E400EBC267 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -164,6 +172,10 @@
 				DD005D201524F386006B9481 /* Entitlements.plist */,
 				DD5960A515268D6A0086568C /* TrackingLocation.png */,
 				DD5960A215268D6A0086568C /* TrackingLocation@2x.png */,
+				DD5960A615268D6A0086568C /* TrackingHeading.png */,
+				DD5960A315268D6A0086568C /* TrackingHeading@2x.png */,
+				DD5960AC152A77B50086568C /* HeadingAngleSmall.png */,
+				DD5960AD152A77B50086568C /* HeadingAngleSmall@2x.png */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -272,8 +284,12 @@
 				DD005D211524F386006B9481 /* Entitlements.plist in Resources */,
 				DD5960A1152676BE0086568C /* TrackingDotHalo.png in Resources */,
 				DD5960A715268D6A0086568C /* TrackingLocation@2x.png in Resources */,
+				DD5960A815268D6A0086568C /* TrackingHeading@2x.png in Resources */,
 				DD5960A915268D6A0086568C /* TrackingDotHalo@2x.png in Resources */,
 				DD5960AA15268D6A0086568C /* TrackingLocation.png in Resources */,
+				DD5960AB15268D6A0086568C /* TrackingHeading.png in Resources */,
+				DD5960AE152A77B50086568C /* HeadingAngleSmall.png in Resources */,
+				DD5960AF152A77B50086568C /* HeadingAngleSmall@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

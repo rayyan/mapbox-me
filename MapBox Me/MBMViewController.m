@@ -23,10 +23,15 @@
 @property (nonatomic, strong) RMAnnotation *accuracyCircle;
 @property (nonatomic, strong) RMAnnotation *trackingHalo;
 @property (nonatomic, strong) RMAnnotation *userLocation;
-@property (nonatomic, assign) BOOL shouldRecenter;
+@property (nonatomic, strong) RMMarker *userLocationMarker;
+@property (nonatomic, strong) UIImageView *userLocationStaticView;
+@property (nonatomic, strong) UIImageView *userHeadingStaticView;
+@property (nonatomic, assign) BOOL shouldTrackLocation;
+@property (nonatomic, assign) BOOL shouldTrackHeading;
 
-- (void)startUpdating;
-- (void)stopUpdating;
+- (void)startTrackingLocation;
+- (void)startTrackingHeading;
+- (void)stopTracking;
 
 @end
 
@@ -37,7 +42,11 @@
 @synthesize accuracyCircle;
 @synthesize trackingHalo;
 @synthesize userLocation;
-@synthesize shouldRecenter;
+@synthesize userLocationMarker;
+@synthesize userLocationStaticView;
+@synthesize userHeadingStaticView;
+@synthesize shouldTrackLocation;
+@synthesize shouldTrackHeading;
 
 - (void)viewDidLoad
 {
@@ -54,7 +63,7 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"TrackingLocation.png"]
                                                                                                   style:UIBarButtonItemStyleBordered
                                                                                                  target:self 
-                                                                                                 action:@selector(startUpdating)];
+                                                                                                 action:@selector(startTrackingLocation)];
     
     self.mapView.delegate = self;
     self.mapView.tileSource = [[RMMapBoxSource alloc] init];
@@ -81,34 +90,95 @@
 {
     [super viewDidAppear:animated];
 
-    [self startUpdating];
+    [self startTrackingLocation];
 }
 
 #pragma mark -
 
-- (void)startUpdating
+- (void)startTrackingLocation
 {
+    self.navigationItem.rightBarButtonItem.image     = [UIImage imageNamed:@"TrackingLocation.png"];
     self.navigationItem.rightBarButtonItem.tintColor = kMapBoxMeActiveTintColor;
-    self.navigationItem.rightBarButtonItem.action    = @selector(stopUpdating);
+    self.navigationItem.rightBarButtonItem.action    = ([CLLocationManager headingAvailable] ? @selector(startTrackingHeading) : @selector(stopTracking));
 
-    self.shouldRecenter = YES;
+    self.shouldTrackLocation = YES;
     
     [self.locationManager startUpdatingLocation];
 }
 
-- (void)stopUpdating
+- (void)startTrackingHeading
 {
+    self.navigationItem.rightBarButtonItem.image     = [UIImage imageNamed:@"TrackingHeading.png"];
+    self.navigationItem.rightBarButtonItem.tintColor = kMapBoxMeActiveTintColor;
+    self.navigationItem.rightBarButtonItem.action    = @selector(stopTracking);
+    
+    self.shouldTrackHeading = YES;
+    
+    self.locationManager.headingFilter = 5;
+    
+    self.userLocationMarker.hidden = YES;
+    
+    self.userHeadingStaticView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"HeadingAngleSmall.png"]];
+    
+    self.userHeadingStaticView.frame = CGRectMake(round(self.view.center.x - (self.userHeadingStaticView.bounds.size.width / 2)), 
+                                                  round(self.view.center.y - self.userHeadingStaticView.bounds.size.height - 4), 
+                                                  self.userHeadingStaticView.bounds.size.width, 
+                                                  self.userHeadingStaticView.bounds.size.height);
+    
+    self.userHeadingStaticView.alpha = 0.0;
+    
+    [self.view addSubview:self.userHeadingStaticView];
+    
+    [UIView animateWithDuration:0.5 animations:^(void) { self.userHeadingStaticView.alpha = 1.0; }];
+    
+    self.userLocationStaticView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"TrackingDot.png"]];
+    
+    self.userLocationStaticView.center = CGPointMake(round(self.view.bounds.size.width / 2), round(self.view.bounds.size.height / 2));
+    
+    [self.view addSubview:self.userLocationStaticView];
+    
+    [self.locationManager startUpdatingHeading];
+}
+
+- (void)stopTracking
+{
+    [self.userLocationStaticView removeFromSuperview];
+    
+    self.userLocationMarker.hidden = NO;
+
+    [UIView animateWithDuration:0.5
+                          delay:0.0
+                        options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
+                     animations:^(void)
+                     {
+                         self.mapView.transform = CGAffineTransformIdentity;
+                         
+                         if (self.userHeadingStaticView.superview)
+                             self.userHeadingStaticView.alpha = 0.0;
+                     }
+                     completion:^(BOOL finished)
+                     {
+                         if (self.userHeadingStaticView.superview)
+                              [self.userHeadingStaticView removeFromSuperview];
+                     }];
+
+    self.shouldTrackLocation = NO;
+    self.shouldTrackHeading  = NO;
+    
     [self.locationManager stopUpdatingLocation];
+    [self.locationManager stopUpdatingHeading];
     
-    self.shouldRecenter = NO;
-    
+    self.navigationItem.rightBarButtonItem.image     = [UIImage imageNamed:@"TrackingLocation.png"];
     self.navigationItem.rightBarButtonItem.tintColor = kMapBoxMeNormalTintColor;
-    self.navigationItem.rightBarButtonItem.action    = @selector(startUpdating);
+    self.navigationItem.rightBarButtonItem.action    = @selector(startTrackingLocation);
 }
 
 - (void)handleGesture:(UIGestureRecognizer *)gesture
 {
-    self.shouldRecenter = NO;
+    if (self.shouldTrackHeading)
+        [self.userHeadingStaticView removeFromSuperview];
+
+    [self stopTracking];
 }
 
 #pragma mark -
@@ -120,55 +190,70 @@
                         options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
                      animations:^(void)
                      {
-                         float delta = manager.location.horizontalAccuracy / 110000;
+                         float delta = newLocation.horizontalAccuracy / 110000;
                          
-                         CLLocationCoordinate2D southWest = CLLocationCoordinate2DMake(manager.location.coordinate.latitude  - delta, 
-                                                                                       manager.location.coordinate.longitude - delta);
+                         CLLocationCoordinate2D southWest = CLLocationCoordinate2DMake(newLocation.coordinate.latitude  - delta, 
+                                                                                       newLocation.coordinate.longitude - delta);
 
-                         CLLocationCoordinate2D northEast = CLLocationCoordinate2DMake(manager.location.coordinate.latitude  + delta, 
-                                                                                       manager.location.coordinate.longitude + delta);
+                         CLLocationCoordinate2D northEast = CLLocationCoordinate2DMake(newLocation.coordinate.latitude  + delta, 
+                                                                                       newLocation.coordinate.longitude + delta);
 
-                         if (self.shouldRecenter)
+                         if (self.shouldTrackLocation)
                              [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:southWest northEast:northEast animated:NO];
                          
                          // accuracy circle: visible when homing in
                          //
                          if ( ! self.accuracyCircle)
                          {
-                             self.accuracyCircle = [RMAnnotation annotationWithMapView:self.mapView coordinate:manager.location.coordinate andTitle:nil];
+                             self.accuracyCircle = [RMAnnotation annotationWithMapView:self.mapView coordinate:newLocation.coordinate andTitle:nil];
 
                              [self.mapView addAnnotation:self.accuracyCircle];
                          }
                          
-                         self.accuracyCircle.coordinate = manager.location.coordinate;
+                         self.accuracyCircle.coordinate = newLocation.coordinate;
                          
-                         [self.mapView.delegate mapView:self.mapView layerForAnnotation:self.accuracyCircle].hidden = (manager.location.horizontalAccuracy <= 10);
+                         [self.mapView.delegate mapView:self.mapView layerForAnnotation:self.accuracyCircle].hidden = (newLocation.horizontalAccuracy <= 10);
 
                          // tracking halo: visible after homing in
                          //
                          if ( ! self.trackingHalo)
                          {
-                             self.trackingHalo = [RMAnnotation annotationWithMapView:self.mapView coordinate:manager.location.coordinate andTitle:nil];
+                             self.trackingHalo = [RMAnnotation annotationWithMapView:self.mapView coordinate:newLocation.coordinate andTitle:nil];
                              
                              [self.mapView addAnnotation:self.trackingHalo];
                          }
                          
-                         self.trackingHalo.coordinate = manager.location.coordinate;
+                         self.trackingHalo.coordinate = newLocation.coordinate;
                          
-                         [self.mapView.delegate mapView:self.mapView layerForAnnotation:self.trackingHalo].hidden = (manager.location.horizontalAccuracy > 10);
+                         [self.mapView.delegate mapView:self.mapView layerForAnnotation:self.trackingHalo].hidden = (newLocation.horizontalAccuracy > 10);
                          
                          // user location: always visible
                          //
                          if ( ! self.userLocation)
                          {
-                             self.userLocation = [RMAnnotation annotationWithMapView:self.mapView coordinate:manager.location.coordinate andTitle:nil];
+                             self.userLocation = [RMAnnotation annotationWithMapView:self.mapView coordinate:newLocation.coordinate andTitle:nil];
                              
                              [self.mapView addAnnotation:self.userLocation];
                          }
                          
-                         self.userLocation.coordinate = manager.location.coordinate;
+                         self.userLocation.coordinate = newLocation.coordinate;
                      }
                      completion:nil];
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
+{
+    if (self.shouldTrackHeading && newHeading.trueHeading != 0)
+    {
+        [UIView animateWithDuration:1.0
+                              delay:0.0
+                            options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
+                         animations:^(void)
+                         {
+                             self.mapView.transform = CGAffineTransformMakeRotation((M_PI / -180) * newHeading.trueHeading);
+                         }
+                         completion:nil];
+    }
 }
 
 #pragma mark -
@@ -233,7 +318,9 @@
     }
     else if ([annotation isEqual:self.userLocation])
     {
-        return [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDot.png"]];
+        self.userLocationMarker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDot.png"]];
+        
+        return self.userLocationMarker;
     }
     
     return nil;
