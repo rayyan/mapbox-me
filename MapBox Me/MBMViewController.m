@@ -66,7 +66,7 @@
                                                                                                  action:@selector(startTrackingLocation)];
     
     self.mapView.delegate = self;
-    self.mapView.tileSource = [[RMMapBoxSource alloc] init];
+    self.mapView.tileSource = [[RMMapBoxSource alloc] initWithReferenceURL:[NSURL URLWithString:@"http://a.tiles.mapbox.com/v3/mapbox.mapbox-streets.json"]];
     self.mapView.decelerationMode = RMMapDecelerationFast;
     self.mapView.adjustTilesForRetinaDisplay = YES;    
     self.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
