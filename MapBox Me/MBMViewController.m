@@ -304,8 +304,8 @@
             self.trackingHaloLayer = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDotHalo.png"]];
             
             [CATransaction begin];
-            [CATransaction setAnimationDuration:2.0];
-            [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut]];
+            [CATransaction setAnimationDuration:2.5];
+            [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
             
             // ensure hide/show only happens on animation boundaries
             //
