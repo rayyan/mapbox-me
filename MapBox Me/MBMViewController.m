@@ -23,7 +23,9 @@
 @property (nonatomic, strong) RMAnnotation *accuracyCircle;
 @property (nonatomic, strong) RMAnnotation *trackingHalo;
 @property (nonatomic, strong) RMAnnotation *userLocation;
-@property (nonatomic, strong) RMMarker *userLocationMarker;
+@property (nonatomic, strong) RMCircle *accuracyCircleLayer;
+@property (nonatomic, strong) RMMarker *trackingHaloLayer;
+@property (nonatomic, strong) RMMarker *userLocationLayer;
 @property (nonatomic, strong) UIImageView *userLocationStaticView;
 @property (nonatomic, strong) UIImageView *userHeadingStaticView;
 @property (nonatomic, assign) BOOL shouldTrackLocation;
@@ -42,7 +44,9 @@
 @synthesize accuracyCircle;
 @synthesize trackingHalo;
 @synthesize userLocation;
-@synthesize userLocationMarker;
+@synthesize accuracyCircleLayer;
+@synthesize trackingHaloLayer;
+@synthesize userLocationLayer;
 @synthesize userLocationStaticView;
 @synthesize userHeadingStaticView;
 @synthesize shouldTrackLocation;
@@ -116,7 +120,7 @@
     
     self.locationManager.headingFilter = 5;
     
-    self.userLocationMarker.hidden = YES;
+    self.userLocationLayer.hidden = YES;
     
     self.userHeadingStaticView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"HeadingAngleSmall.png"]];
     
@@ -144,8 +148,9 @@
 {
     [self.userLocationStaticView removeFromSuperview];
     
-    self.userLocationMarker.hidden = NO;
-
+    self.accuracyCircleLayer.hidden = YES;
+    self.userLocationLayer.hidden   = NO;
+    
     [UIView animateWithDuration:0.5
                           delay:0.0
                         options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
@@ -201,7 +206,7 @@
                          if (self.shouldTrackLocation)
                              [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:southWest northEast:northEast animated:NO];
                          
-                         // accuracy circle: visible when homing in
+                         // accuracy circle: visible when homing in, bouncing at first
                          //
                          if ( ! self.accuracyCircle)
                          {
@@ -210,11 +215,75 @@
                              [self.mapView addAnnotation:self.accuracyCircle];
                          }
                          
+                         // update accuracy circle coordinate
+                         //
                          self.accuracyCircle.coordinate = newLocation.coordinate;
                          
-                         [self.mapView.delegate mapView:self.mapView layerForAnnotation:self.accuracyCircle].hidden = (newLocation.horizontalAccuracy <= 10);
+                         // start visible
+                         //                         
+                         self.accuracyCircleLayer.hidden = NO;
+                         
+                         if (newLocation.horizontalAccuracy <= 10)
+                         {
+                             // shrink & hide when homed in
+                             //
+                             [CATransaction begin];
+                             [CATransaction setAnimationDuration:0.5];
+                             [CATransaction setCompletionBlock:^(void) { self.accuracyCircleLayer.hidden = YES; }];
+                             
+                             CABasicAnimation *radiusAnimation = [CABasicAnimation animationWithKeyPath:@"transform"];
+                             
+                             radiusAnimation.duration = 0.5;
+                             
+                             radiusAnimation.autoreverses = NO;
+                             
+                             radiusAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+                             
+                             radiusAnimation.fromValue = [NSValue valueWithCATransform3D:self.accuracyCircleLayer.transform];
+                             radiusAnimation.toValue   = [NSValue valueWithCATransform3D:CATransform3DMakeScale(0.1, 0.1, 1.0)];
+                             
+                             radiusAnimation.removedOnCompletion = YES;
+                             
+                             [self.accuracyCircleLayer addAnimation:radiusAnimation forKey:@"animateScale"];
 
-                         // tracking halo: visible after homing in
+                             [CATransaction commit];
+                             
+                         }
+                         else if ([self.accuracyCircleLayer animationForKey:@"animateScale"].autoreverses && newLocation.horizontalAccuracy < 100)
+                         {
+                             // remove bounce when < 100m
+                             //
+                             [self.accuracyCircleLayer removeAnimationForKey:@"animateScale"];
+                         }
+                         
+                         // animate resize to new radius
+                         //
+                         if (oldLocation)
+                         {
+                             [CATransaction begin];
+                             [CATransaction setAnimationDuration:0.5];
+                             
+                             CABasicAnimation *radiusAnimation = [CABasicAnimation animationWithKeyPath:@"transform"];
+                             
+                             radiusAnimation.duration = 0.5;
+                             
+                             radiusAnimation.autoreverses = NO;
+                             
+                             radiusAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+                             
+                             CGFloat factor = (newLocation.horizontalAccuracy / oldLocation.horizontalAccuracy);
+                             
+                             radiusAnimation.fromValue = [NSValue valueWithCATransform3D:self.accuracyCircleLayer.transform];
+                             radiusAnimation.toValue   = [NSValue valueWithCATransform3D:CATransform3DMakeScale(factor, factor, 1.0)];
+                             
+                             radiusAnimation.removedOnCompletion = YES;
+                             
+                             [self.accuracyCircleLayer addAnimation:radiusAnimation forKey:@"animateScale"];
+                             
+                             [CATransaction commit];
+                         }
+
+                         // tracking halo: visible after homing in to 10m
                          //
                          if ( ! self.trackingHalo)
                          {
@@ -224,8 +293,6 @@
                          }
                          
                          self.trackingHalo.coordinate = newLocation.coordinate;
-                         
-                         [self.mapView.delegate mapView:self.mapView layerForAnnotation:self.trackingHalo].hidden = (newLocation.horizontalAccuracy > 10);
                          
                          // user location: always visible
                          //
@@ -269,58 +336,96 @@
 {
     if ([annotation isEqual:self.accuracyCircle])
     {
-        RMCircle *circle = [[RMCircle alloc] initWithView:self.mapView radiusInMeters:self.locationManager.location.horizontalAccuracy];
+        if ( ! self.accuracyCircleLayer)
+        {
+            // create circle layer
+            //
+            self.accuracyCircleLayer = [[RMCircle alloc] initWithView:self.mapView radiusInMeters:self.locationManager.location.horizontalAccuracy];
+            
+            self.accuracyCircleLayer.lineColor = [UIColor colorWithRed:0.378 green:0.552 blue:0.827 alpha:0.7];
+            self.accuracyCircleLayer.fillColor = [UIColor colorWithRed:0.378 green:0.552 blue:0.827 alpha:0.15];
+            
+            self.accuracyCircleLayer.lineWidthInPixels = 2.0;
+            
+            // start with bounce animation
+            //
+            CABasicAnimation *radiusAnimation = [CABasicAnimation animationWithKeyPath:@"transform"];
+            
+            radiusAnimation.duration = 0.4;
+            
+            radiusAnimation.autoreverses = YES;
+            
+            radiusAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+            
+            radiusAnimation.repeatCount = MAXFLOAT;
+            
+            radiusAnimation.fromValue = [NSValue valueWithCATransform3D:CATransform3DMakeScale(1.1,     1.1,     1.0)];
+            radiusAnimation.toValue   = [NSValue valueWithCATransform3D:CATransform3DMakeScale((1/1.1), (1/1.1), 1.0)];
+            
+            radiusAnimation.removedOnCompletion = NO;
+            
+            [self.accuracyCircleLayer addAnimation:radiusAnimation forKey:@"animateScale"];
+        }
         
-        circle.lineColor = [UIColor colorWithRed:0.378 green:0.552 blue:0.827 alpha:0.7];
-        circle.fillColor = [UIColor colorWithRed:0.378 green:0.552 blue:0.827 alpha:0.15];
-        
-        circle.lineWidthInPixels = 2.0;
-        
-        // TODO: add throbber animation
-        
-        return circle;
+        return self.accuracyCircleLayer;
     }
     else if ([annotation isEqual:self.trackingHalo])
     {
-        RMMarker *halo = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDotHalo.png"]];
-        
-        CABasicAnimation *boundsAnimation = [CABasicAnimation animationWithKeyPath:@"bounds"];
-        
-        boundsAnimation.duration = 2.0;
-        
-        boundsAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+        if ( ! self.trackingHaloLayer)
+        {
+            // create image marker
+            //
+            self.trackingHaloLayer = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDotHalo.png"]];
+            
+            [CATransaction begin];
+            [CATransaction setAnimationDuration:2.0];
+            [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut]];
+            
+            // ensure hide/show only happens on animation boundaries
+            //
+            [CATransaction setCompletionBlock:^(void) { self.trackingHaloLayer.hidden = (self.locationManager.location.horizontalAccuracy > 10); }];
+            
+            // scale out radially
+            //
+            CABasicAnimation *boundsAnimation = [CABasicAnimation animationWithKeyPath:@"transform"];
+            
+            boundsAnimation.repeatCount = MAXFLOAT;
+            
+            boundsAnimation.fromValue = [NSValue valueWithCATransform3D:CATransform3DMakeScale(0.1, 0.1, 1.0)];
+            boundsAnimation.toValue   = [NSValue valueWithCATransform3D:CATransform3DMakeScale(2.0, 2.0, 1.0)];
+            
+            boundsAnimation.removedOnCompletion = NO;
+            
+            [self.trackingHaloLayer addAnimation:boundsAnimation forKey:@"animateScale"];
 
-        boundsAnimation.repeatCount = MAXFLOAT;
+            // go transparent as scaled out
+            //
+            CABasicAnimation *opacityAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
+            
+            opacityAnimation.repeatCount = MAXFLOAT;
+            
+            opacityAnimation.fromValue = [NSNumber numberWithFloat:1.0];
+            opacityAnimation.toValue   = [NSNumber numberWithFloat:-1.0];
+            
+            opacityAnimation.removedOnCompletion = NO;
+            
+            [self.trackingHaloLayer addAnimation:opacityAnimation forKey:@"animateOpacity"];
+            
+            [CATransaction commit];
+        }
         
-        boundsAnimation.fromValue = [NSValue valueWithCGRect:CGRectMake(0, 0, halo.bounds.size.width * 0.2, halo.bounds.size.height * 0.2)];
-        boundsAnimation.toValue   = [NSValue valueWithCGRect:CGRectMake(0, 0, halo.bounds.size.width * 1.1, halo.bounds.size.height * 1.1)];
-
-        boundsAnimation.removedOnCompletion = NO;
-        
-        [halo addAnimation:boundsAnimation forKey:@"animateBounds"];
-
-        CABasicAnimation *opacityAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
-        
-        opacityAnimation.duration = 2.0;
-        
-        opacityAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
-
-        opacityAnimation.repeatCount = MAXFLOAT;
-        
-        opacityAnimation.fromValue = [NSNumber numberWithFloat:1.0];
-        opacityAnimation.toValue   = [NSNumber numberWithFloat:0.0];
-        
-        opacityAnimation.removedOnCompletion = NO;
-        
-        [halo addAnimation:opacityAnimation forKey:@"animateOpacity"];
-        
-        return halo;
+        return self.trackingHaloLayer;
     }
     else if ([annotation isEqual:self.userLocation])
     {
-        self.userLocationMarker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDot.png"]];
+        if ( ! self.userLocationLayer)
+        {
+            // create image marker
+            //
+            self.userLocationLayer = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"TrackingDot.png"]];
+        }
         
-        return self.userLocationMarker;
+        return self.userLocationLayer;
     }
     
     return nil;
