@@ -124,10 +124,8 @@
     
     self.userHeadingStaticView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"HeadingAngleSmall.png"]];
     
-    self.userHeadingStaticView.frame = CGRectMake(round(self.view.center.x - (self.userHeadingStaticView.bounds.size.width / 2)), 
-                                                  round(self.view.center.y - self.userHeadingStaticView.bounds.size.height - 4), 
-                                                  self.userHeadingStaticView.bounds.size.width, 
-                                                  self.userHeadingStaticView.bounds.size.height);
+    self.userHeadingStaticView.center = CGPointMake(round(self.view.bounds.size.width  / 2), 
+                                                    round(self.view.bounds.size.height / 2) - (self.userHeadingStaticView.bounds.size.height / 2) - 4);
     
     self.userHeadingStaticView.alpha = 0.0;
     
@@ -137,7 +135,8 @@
     
     self.userLocationStaticView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"TrackingDot.png"]];
     
-    self.userLocationStaticView.center = CGPointMake(round(self.view.bounds.size.width / 2), round(self.view.bounds.size.height / 2));
+    self.userLocationStaticView.center = CGPointMake(round(self.view.bounds.size.width  / 2), 
+                                                     round(self.view.bounds.size.height / 2));
     
     [self.view addSubview:self.userLocationStaticView];
     
@@ -146,11 +145,8 @@
 
 - (void)stopTracking
 {
-    [self.userLocationStaticView removeFromSuperview];
-    
     self.accuracyCircleLayer.hidden = YES;
-    self.userLocationLayer.hidden   = NO;
-    
+
     [UIView animateWithDuration:0.5
                           delay:0.0
                         options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
@@ -163,8 +159,13 @@
                      }
                      completion:^(BOOL finished)
                      {
+                         if (self.userLocationStaticView.superview)
+                             [self.userLocationStaticView removeFromSuperview];
+
                          if (self.userHeadingStaticView.superview)
-                              [self.userHeadingStaticView removeFromSuperview];
+                             [self.userHeadingStaticView removeFromSuperview];
+                         
+                         self.userLocationLayer.hidden = NO;
                      }];
 
     self.shouldTrackLocation = NO;
@@ -181,7 +182,12 @@
 - (void)handleGesture:(UIGestureRecognizer *)gesture
 {
     if (self.shouldTrackHeading)
-        [self.userHeadingStaticView removeFromSuperview];
+    {
+        [self.userLocationStaticView removeFromSuperview];
+        [self.userHeadingStaticView  removeFromSuperview];
+        
+        self.userLocationLayer.hidden = NO;
+    }
 
     [self stopTracking];
 }
