@@ -13,6 +13,7 @@
 		DD005CF61524F065006B9481 /* TrackingDot.png in Resources */ = {isa = PBXBuildFile; fileRef = DD005CF41524F065006B9481 /* TrackingDot.png */; };
 		DD005D1B1524F0F2006B9481 /* routeme.plist in Resources */ = {isa = PBXBuildFile; fileRef = DD005D1A1524F0F2006B9481 /* routeme.plist */; };
 		DD005D211524F386006B9481 /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = DD005D201524F386006B9481 /* Entitlements.plist */; };
+		DD57D03D152FA94500584A7C /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD57D03C152FA94500584A7C /* libz.dylib */; };
 		DD5960A1152676BE0086568C /* TrackingDotHalo.png in Resources */ = {isa = PBXBuildFile; fileRef = DD5960A0152676BE0086568C /* TrackingDotHalo.png */; };
 		DD5960A715268D6A0086568C /* TrackingLocation@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD5960A215268D6A0086568C /* TrackingLocation@2x.png */; };
 		DD5960A815268D6A0086568C /* TrackingHeading@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD5960A315268D6A0086568C /* TrackingHeading@2x.png */; };
@@ -66,6 +67,7 @@
 		DD005CF41524F065006B9481 /* TrackingDot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TrackingDot.png; sourceTree = "<group>"; };
 		DD005D1A1524F0F2006B9481 /* routeme.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = routeme.plist; sourceTree = "<group>"; };
 		DD005D201524F386006B9481 /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = SOURCE_ROOT; };
+		DD57D03C152FA94500584A7C /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		DD5960A0152676BE0086568C /* TrackingDotHalo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TrackingDotHalo.png; sourceTree = "<group>"; };
 		DD5960A215268D6A0086568C /* TrackingLocation@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TrackingLocation@2x.png"; sourceTree = "<group>"; };
 		DD5960A315268D6A0086568C /* TrackingHeading@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TrackingHeading@2x.png"; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 				DDD0B7A61524D4E400EBC267 /* UIKit.framework in Frameworks */,
 				DD596135152BB0210086568C /* libMapView.a in Frameworks */,
 				DDD0B7DD1524D6EA00EBC267 /* libsqlite3.dylib in Frameworks */,
+				DD57D03D152FA94500584A7C /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -147,6 +150,7 @@
 				DDD0B7DE1524D6FB00EBC267 /* QuartzCore.framework */,
 				DDD0B7A51524D4E400EBC267 /* UIKit.framework */,
 				DDD0B7DC1524D6EA00EBC267 /* libsqlite3.dylib */,
+				DD57D03C152FA94500584A7C /* libz.dylib */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
