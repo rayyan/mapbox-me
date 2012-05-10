@@ -8,10 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-#import <CoreLocation/CoreLocation.h>
+#import "RMMapViewDelegate.h"
 
-#import "RMMapView.h"
-
-@interface MBMViewController : UIViewController <CLLocationManagerDelegate, RMMapViewDelegate, UIGestureRecognizerDelegate>
+@interface MBMViewController : UIViewController <RMMapViewDelegate>
 
 @end
