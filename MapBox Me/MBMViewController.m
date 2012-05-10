@@ -17,8 +17,6 @@
 @interface MBMViewController ()
 
 @property (nonatomic, strong) IBOutlet RMMapView *mapView;
-@property (nonatomic, assign) BOOL shouldTrackLocation;
-@property (nonatomic, assign) BOOL shouldTrackHeading;
 
 - (void)startTrackingLocation;
 - (void)startTrackingHeading;
@@ -29,8 +27,6 @@
 @implementation MBMViewController
 
 @synthesize mapView;
-@synthesize shouldTrackLocation;
-@synthesize shouldTrackHeading;
 
 - (void)viewDidLoad
 {
