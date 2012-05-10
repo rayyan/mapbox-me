@@ -1,8 +1,8 @@
 # MapBox Me
 
-Small reference implementation of native iPhone MapBox maps. Displays user's location on MapBox Streets somewhat like Maps.app.
+Small reference implementation of native iPhone MapBox maps. Displays user's location & heading on MapBox Streets somewhat like Maps.app.
 
-Needs improvement, as Route-Me doesn't feature a built-in "home in on user" functionality. 
+Makes use of the built-in user location services capabilities of the [MapBox iOS SDK](https://github.com/mapbox/mapbox-ios-sdk).
 
 Since this project uses submodules, you'll need to check them out, or clone the project with
 
