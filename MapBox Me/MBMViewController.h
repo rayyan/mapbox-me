@@ -8,8 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-#import "RMMapViewDelegate.h"
-
-@interface MBMViewController : UIViewController <RMMapViewDelegate>
+@interface MBMViewController : UIViewController
 
 @end
