@@ -6,6 +6,6 @@ Makes use of the built-in user location services capabilities of the [MapBox iOS
 
 Since this project uses submodules, you'll need to check them out, or clone the project with
 
-    git clone --recursive git@github.com:mapbox/mapbox-me.git
+    git clone --recursive git://github.com/mapbox/mapbox-me.git
 
 ![](https://raw.github.com/mapbox/mapbox-me/master/screenshot.png)
